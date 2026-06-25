@@ -3,10 +3,11 @@ import { createRouteHandlerClient } from '@/lib/supabase-server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createRouteHandlerClient()
+    const { id } = await params
+    const supabase = await createRouteHandlerClient()
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
@@ -17,7 +18,7 @@ export async function GET(
     const { data: agency } = await supabase
       .from('agencies')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('owner_id', user.id)
       .single()
 
@@ -28,7 +29,7 @@ export async function GET(
     const { data: clients, error } = await supabase
       .from('clients')
       .select('*')
-      .eq('agency_id', params.id)
+      .eq('agency_id', id)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -43,10 +44,11 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createRouteHandlerClient()
+    const { id } = await params
+    const supabase = await createRouteHandlerClient()
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
@@ -57,7 +59,7 @@ export async function POST(
     const { data: agency } = await supabase
       .from('agencies')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('owner_id', user.id)
       .single()
 
@@ -75,7 +77,7 @@ export async function POST(
     const { data: client, error } = await supabase
       .from('clients')
       .insert({
-        agency_id: params.id,
+        agency_id: id,
         business_name,
         contact_name: contact_name || null,
         email: email || null,

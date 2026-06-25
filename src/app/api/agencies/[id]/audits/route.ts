@@ -4,10 +4,11 @@ import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createRouteHandlerClient()
+    const { id } = await params
+    const supabase = await createRouteHandlerClient()
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
@@ -18,7 +19,7 @@ export async function POST(
     const { data: agency } = await supabase
       .from('agencies')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('owner_id', user.id)
       .single()
 
@@ -39,7 +40,7 @@ export async function POST(
       .from('audits')
       .insert({
         id: uuidv4(),
-        agency_id: params.id,
+        agency_id: id,
         client_id,
         audit_type,
         data: { status: 'pending', website_url, requested_at: new Date().toISOString() },

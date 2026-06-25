@@ -3,10 +3,11 @@ import { createRouteHandlerClient } from '@/lib/supabase-server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string; audit_id: string } }
+  { params }: { params: Promise<{ id: string; audit_id: string }> }
 ) {
   try {
-    const supabase = createRouteHandlerClient()
+    const { id, audit_id } = await params
+    const supabase = await createRouteHandlerClient()
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
@@ -17,7 +18,7 @@ export async function GET(
     const { data: agency } = await supabase
       .from('agencies')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('owner_id', user.id)
       .single()
 
@@ -28,8 +29,8 @@ export async function GET(
     const { data: audit, error } = await supabase
       .from('audits')
       .select('*')
-      .eq('id', params.audit_id)
-      .eq('agency_id', params.id)
+      .eq('id', audit_id)
+      .eq('agency_id', id)
       .single()
 
     if (error || !audit) {

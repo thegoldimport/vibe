@@ -3,7 +3,7 @@ import { createRouteHandlerClient } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     const body = await request.json()
     const { email, password } = body
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     const body = await request.json()
     const { email, password } = body
 
