@@ -1,0 +1,12 @@
+langchain
+langchain-google-genai
+langgraph
+pydantic
+python-dotenv
+google-generativeai
+sqlalchemy
+psycopg2-binary
+pinecone-client
+faiss-cpu
+sentence-transformers
+langchain-community
