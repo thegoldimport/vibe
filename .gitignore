@@ -1,0 +1,5 @@
+.env
+*.log
+*.json
+models_list.txt
+__pycache__/

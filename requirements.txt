@@ -10,3 +10,4 @@ pinecone-client
 faiss-cpu
 sentence-transformers
 langchain-community
+langchain-openai

@@ -3,8 +3,10 @@ from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, System
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from core.memory import MemoryManager
+from core.llm_provider import LLMProvider
 from agents.templates import CEO_TEMPLATE, LEAD_GEN_TEMPLATE, SEO_TEMPLATE, CONTENT_WRITER_TEMPLATE
 import operator
+import os
 
 class AgentState(TypedDict):
     # Messages in the conversation (Owner <-> CEO)
@@ -35,15 +37,8 @@ def get_memory(agency_id: str) -> MemoryManager:
         AGENCY_MEMORIES[agency_id] = MemoryManager(agency_id)
     return AGENCY_MEMORIES[agency_id]
 
-from langchain_google_genai import ChatGoogleGenerativeAI
-import os
-
-# Initialize LLM (Gemini 1.5 Pro for CEO)
-def get_llm(model_name="gemini-1.5-pro"):
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        return None
-    return ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key)
+# Initialize LLM Provider
+provider = LLMProvider()
 
 def ceo_node(state: AgentState):
     agency_id = state['agency_id']
@@ -56,7 +51,7 @@ def ceo_node(state: AgentState):
     
     messages = state['messages']
     
-    llm = get_llm()
+    llm = provider.get_llm(model_type="ceo")
     if llm:
         # Actual LLM logic
         system_prompt = CEO_TEMPLATE.system_prompt.format(
@@ -114,7 +109,7 @@ def ceo_node(state: AgentState):
 
 def lead_gen_node(state: AgentState):
     niche = state.get('niche', 'General Digital Marketing')
-    llm = get_llm("gemini-1.5-flash") # Use flash for employees
+    llm = provider.get_llm(model_type="employee")
     
     if llm:
         system_prompt = LEAD_GEN_TEMPLATE.system_prompt.format(niche=niche)
@@ -136,7 +131,7 @@ def lead_gen_node(state: AgentState):
 def writer_node(state: AgentState):
     branding = state.get('branding', {})
     brand_voice = branding.get('voice', 'Professional')
-    llm = get_llm("gemini-1.5-flash")
+    llm = provider.get_llm(model_type="employee")
     
     if llm:
         system_prompt = CONTENT_WRITER_TEMPLATE.system_prompt.format(brand_voice=brand_voice)
