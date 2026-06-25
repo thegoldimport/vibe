@@ -1,0 +1,36 @@
+{
+  "name": "vibeagencies",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VibeAgencies - AI-powered digital agency platform",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest --passWithNoTests",
+    "audit:cli": "tsx src/lib/audit-engine/cli.ts"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@google/generative-ai": "^0.21.0",
+    "playwright": "^1.48.0",
+    "puppeteer": "^23.0.0",
+    "pdfkit": "^0.15.0",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@types/pdfkit": "^0.13.0",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.5.0",
+    "tsx": "^4.19.0",
+    "jest": "^29.7.0",
+    "@jest/types": "^29.6.0"
+  }
+}
